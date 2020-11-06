@@ -3,6 +3,8 @@ import struct
 
 
 class RCONClient:
+    """Base remote console client"""
+
     def __init__(self, host, auth):
         split = host.split(':')
 
