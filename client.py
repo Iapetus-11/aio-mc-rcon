@@ -14,7 +14,7 @@ class RCONClient:
         self._reader = None
         self._writer = None
 
-        asyncio.get_event_loop().run_until_complete(self._setup())
+        asyncio.get_event_loop().create_task(self._setup())
 
     async def _setup(self):
         self._reader, self._writer = await asyncio.open_connection(self.host, self.port)
