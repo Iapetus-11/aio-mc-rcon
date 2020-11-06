@@ -14,7 +14,7 @@ class RCONClient:
         self._reader = None
         self._writer = None
 
-        self.setup_task = asyncio.get_event_loop().create_task(self._setup())
+        self._setup_task = asyncio.get_event_loop().create_task(self._setup())
 
     async def _setup(self):
         print('setting up')
@@ -49,7 +49,7 @@ class RCONClient:
         return in_data.decode('utf8')
 
     async def send_command(self, msg):
-        await self.setup_task
+        await self._setup_task
         return await self._send(2, msg)
 
     async def close(self):
