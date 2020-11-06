@@ -51,11 +51,11 @@ class Client:
 
         return in_msg[8:-2].decode('utf8'), in_type
 
-    async def send_cmd(self, msg: str) -> tuple:  # returns ('response from server': str, packet type from server: int)
+    async def send_cmd(self, cmd: str) -> tuple:  # returns ('response from server': str, packet type from server: int)
         if not self._setup_task.done():
             await self._setup_task
 
-        return await self._send(PacketTypes.COMMAND, msg)
+        return await self._send(PacketTypes.COMMAND, cmd)
 
     async def close(self) -> None:
         self._writer.close()
