@@ -1,14 +1,4 @@
 
-class TimeoutError(Exception):
-    """Raised when a timeout occurs"""
-
-    def __init__(self, reason='TimeoutError'):
-        self.reason = reason
-
-    def __str__(self):
-        return self.reason
-
-
 class InvalidAuthError(Exception):
     """Raised when the password is incorrect"""
 
