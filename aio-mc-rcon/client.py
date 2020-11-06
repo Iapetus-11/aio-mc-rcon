@@ -52,8 +52,8 @@ class Client:
     async def send_command(self, msg):
         if not self._setup_task.done():
             await self._setup_task
-            
-        return (await self._send(PacketType.COMMAND, msg))[0]
+
+        return await self._send(PacketType.COMMAND, msg)
 
     async def close(self):
         self._writer.close()
