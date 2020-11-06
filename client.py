@@ -50,7 +50,7 @@ class RCONClient:
         return in_data.decode('utf8')
 
     async def send_command(self, msg):
-        await self._setup_task
+        #await self._setup_task
         return await self._send(2, msg)
 
     async def close(self):
