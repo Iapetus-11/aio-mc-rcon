@@ -1,6 +1,12 @@
 # Aio-MC-RCON
 An async RCON client/wrapper written in Python for Minecraft Java Edition servers
 
+## Installation
+Via pip:
+```python3 -m pip install -U aio-mc-rcon```
+or
+```pip3 install -U aio-mc-rcon```
+
 ## Example Usage
 ```py
 import aiomcrcon
