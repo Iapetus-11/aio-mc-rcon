@@ -2,7 +2,7 @@ import asyncio
 import struct
 
 from .Types import PacketTypes
-from .Errors import InvalidAuthError, InvalidDataReceivedError, ClientClosedError
+from .Errors import ConnectionFailedError, InvalidAuthError, InvalidDataReceivedError, ClientClosedError
 
 
 class Client:
@@ -28,7 +28,13 @@ class Client:
             self._reader, self._writer = await asyncio.open_connection(self.host, self.port)
         except TimeoutError:
             self._closed = True
-            raise TimeoutError('A timeout occurred while attempting to connect to the server')
+            raise ConnectionFailedError('A timeout occurred while attempting to connect to the server')
+        except ConnectionRefusedError:
+            self._closed = True
+            raise ConnectionFailedError('The connection was refused by the server')
+        except Exception as e:
+            self._closed = True
+            raise ConnectionFailedError(f'The connection failed for an unknown reason: {e}')
 
         await self._send(PacketTypes.LOGIN, self.auth)
 
