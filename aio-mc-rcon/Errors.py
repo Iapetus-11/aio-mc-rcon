@@ -9,7 +9,7 @@ class TimeoutError(Exception):
         return self.reason
 
 
-class InvalidAuth(Exception):
+class InvalidAuthError(Exception):
     """Raised when the password is incorrect"""
 
     def __str__(self):
