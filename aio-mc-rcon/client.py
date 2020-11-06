@@ -40,18 +40,20 @@ class Client:
 
         in_len = struct.unpack('<i', await self._read(4))
         in_msg = await self._read(in_len[0])
-        
-        in_id = struct.unpack('<ii', in_msg[:8])[0]
+
+        in_type = struct.unpack('<ii', in_msg[:8])[0]
         in_data, in_pad = in_msg[8:-2], in_msg[-2:]
 
-        if in_id == PacketType.INVALID_AUTH: raise Exception('Invalid authentication')
+        if in_type == PacketType.INVALID_AUTH: raise Exception('Invalid authentication')
         if in_pad != b'\x00\x00': raise Exception('Invalid response')
 
-        return in_data.decode('utf8')
+        return in_data.decode('utf8'), in_type
 
     async def send_command(self, msg):
-        await self._setup_task
-        return await self._send(PacketType.COMMAND, msg)
+        if not self._setup_task.done():
+            await self._setup_task
+            
+        return (await self._send(PacketType.COMMAND, msg))[0]
 
     async def close(self):
         self._writer.close()
