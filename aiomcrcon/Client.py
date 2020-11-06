@@ -50,7 +50,7 @@ class Client:
 
         return in_msg[8:-2].decode('utf8'), in_type
 
-    async def send_command(self, msg):
+    async def send_cmd(self, msg):
         if not self._setup_task.done():
             await self._setup_task
 
