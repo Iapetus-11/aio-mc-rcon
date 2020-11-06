@@ -26,7 +26,7 @@ asyncio.run(main())
 * Coroutines:
   * `send_cmd(cmd: str)` - where `cmd` is the command to be sent to the server
   * `close()` - close the connection to the Minecraft server
-  
+
 ### *class* aiomcrcon.**PacketTypes**()
 * Attributes:
   * `LOGIN: int` - The packet id / type for a LOGIN packet
