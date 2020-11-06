@@ -2,7 +2,7 @@ import asyncio
 import struct
 
 from .Types import PacketTypes
-from .Errors import TimeoutError, InvalidAuthError, InvalidDataReceivedError
+from .Errors import InvalidAuthError, InvalidDataReceivedError
 
 
 class Client:
