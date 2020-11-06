@@ -19,7 +19,7 @@ class RCONClient:
 
     async def _setup(self):
         print('setting up')
-        self._reader, self._writer = await asyncio.open_connection(self.host, self.port, self._loop)
+        self._reader, self._writer = await asyncio.open_connection(self.host, self.port, loop=self._loop)
 
         await self._send(3, self.auth)
 
