@@ -8,13 +8,15 @@ from .Errors import ConnectionFailedError, InvalidAuthError, InvalidDataReceived
 class Client:
     """Base remote console client"""
 
-    def __init__(self, host: str, auth: str) -> None:  # host is a string like '0.0.0.0' or '0.0.0.0:25575', auth is a string (rcon.password in server.properties)
+    def __init__(self, host: str, auth: str, timeout: int = 5) -> None:  # host is a string like '0.0.0.0' or '0.0.0.0:25575', auth is a string (rcon.password in server.properties)
         split = host.split(':')
 
         self.host = split[0]
         self.port = int(split[1]) if len(split) > 1 else 25575
 
         self.auth = auth
+
+        self.timeout = timeout
 
         self._reader = None
         self._writer = None
@@ -25,8 +27,11 @@ class Client:
 
     async def _setup(self) -> None:
         try:
-            self._reader, self._writer = await asyncio.open_connection(self.host, self.port)
+            self._reader, self._writer = await asyncio.wait_for(asyncio.open_connection(self.host, self.port), timeout=self.timeout)
         except TimeoutError:
+            self._closed = True
+            raise ConnectionFailedError('A timeout occurred while attempting to connect to the server')
+        except asyncio.TimeoutError:
             self._closed = True
             raise ConnectionFailedError('A timeout occurred while attempting to connect to the server')
         except ConnectionRefusedError:
