@@ -8,7 +8,7 @@ from .Errors import InvalidAuthError, InvalidDataReceivedError
 class Client:
     """Base remote console client"""
 
-    def __init__(self, host, auth):
+    def __init__(self, host: str, auth: str) -> None:  # host is a string like '0.0.0.0' or '0.0.0.0:25575', auth is a string (rcon.password in server.properties)
         split = host.split(':')
 
         self.host = split[0]
@@ -21,7 +21,7 @@ class Client:
 
         self._setup_task = asyncio.get_event_loop().create_task(self._setup())
 
-    async def _setup(self):
+    async def _setup(self) -> None:
         try:
             self._reader, self._writer = await asyncio.open_connection(self.host, self.port)
         except TimeoutError:
@@ -29,7 +29,7 @@ class Client:
 
         await self._send(PacketTypes.LOGIN, self.auth)
 
-    async def _read(self, n_bytes):
+    async def _read(self, n_bytes: int) -> bytes:
         data = b''
 
         while len(data) < n_bytes:
@@ -37,7 +37,8 @@ class Client:
 
         return data
 
-    async def _send(self, _type, msg):  # for _types: 3=login/authenticate, 2=command, 0=cmd response, -1=invalid auth
+    # for _types: 3=login/authenticate, 2=command, 0=cmd response, -1=invalid auth
+    async def _send(self, _type: int, msg: str) -> tuple:  # returns ('response from server': str, packet type from server: int)
         out_msg = struct.pack('<li', 0, _type) + msg.encode('utf8') + b'\x00\x00'
         out_len = struct.pack('<i', len(out_msg))
         self._writer.write(out_len + out_msg)
@@ -50,12 +51,12 @@ class Client:
 
         return in_msg[8:-2].decode('utf8'), in_type
 
-    async def send_cmd(self, msg):
+    async def send_cmd(self, msg: str) -> tuple:  # returns ('response from server': str, packet type from server: int)
         if not self._setup_task.done():
             await self._setup_task
 
         return await self._send(PacketTypes.COMMAND, msg)
 
-    async def close(self):
+    async def close(self) -> None:
         self._writer.close()
         await self._writer.wait_closed()
