@@ -2,7 +2,7 @@ import asyncio
 import struct
 
 
-class RCONClient:
+class Client:
     """Base remote console client"""
 
     def __init__(self, host, auth):
