@@ -15,7 +15,6 @@ class RCONClient:
         self._writer = None
 
         self.setup_task = asyncio.get_event_loop().create_task(self._setup())
-        self.setup_task.start()
 
     async def _setup(self):
         print('setting up')
