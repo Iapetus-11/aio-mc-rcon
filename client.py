@@ -14,10 +14,11 @@ class RCONClient:
         self._reader = None
         self._writer = None
 
-        asyncio.get_event_loop().create_task(self._setup())
+        self.setup_task = asyncio.get_event_loop().create_task(self._setup())
 
     async def _setup(self):
         self._reader, self._writer = await asyncio.open_connection(self.host, self.port)
+
         await self._send(3, self.auth)
 
     async def _read(self, n_bytes):
@@ -45,6 +46,7 @@ class RCONClient:
         return in_data.decode('utf8')
 
     async def send_command(self, msg):
+        await self.setup_task
         return await self._send(2, msg)
 
     async def close(self):
