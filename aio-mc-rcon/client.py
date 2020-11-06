@@ -2,6 +2,7 @@ import asyncio
 import struct
 
 from .Types import PacketTypes
+from .Errors import TimeoutError, InvalidAuthError, InvalidDataReceivedError
 
 
 class Client:
@@ -21,7 +22,10 @@ class Client:
         self._setup_task = asyncio.get_event_loop().create_task(self._setup())
 
     async def _setup(self):
-        self._reader, self._writer = await asyncio.open_connection(self.host, self.port)
+        try:
+            self._reader, self._writer = await asyncio.open_connection(self.host, self.port)
+        except TimeoutError:
+            raise TimeoutError('A timeout occurred while attempting to connect to the server')
 
         await self._send(PacketTypes.LOGIN, self.auth)
 
@@ -44,8 +48,8 @@ class Client:
         in_type = struct.unpack('<ii', in_msg[:8])[0]
         in_data, in_pad = in_msg[8:-2], in_msg[-2:]
 
-        if in_type == PacketTypes.INVALID_AUTH: raise Exception('Invalid authentication')
-        if in_pad != b'\x00\x00': raise Exception('Invalid response')
+        if in_type == PacketTypes.INVALID_AUTH: raise InvalidAuthError
+        if in_pad != b'\x00\x00': raise InvalidDataReceivedError
 
         return in_data.decode('utf8'), in_type
 
