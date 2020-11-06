@@ -40,6 +40,7 @@ class RCONClient:
         in_data, in_pad = in_msg[8:-2], in_msg[-2:]
 
         if in_id == -1: raise Exception('Invalid authentication')
+        if in_pad != b'\x00\x00': raise Exception('Invalid response')
 
         return in_data.decode('utf8')
 
