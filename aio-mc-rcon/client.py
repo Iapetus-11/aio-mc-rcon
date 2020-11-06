@@ -1,7 +1,7 @@
 import asyncio
 import struct
 
-import .Types as PacketType
+from .Types import PacketTypes
 
 
 class Client:
@@ -23,7 +23,7 @@ class Client:
     async def _setup(self):
         self._reader, self._writer = await asyncio.open_connection(self.host, self.port)
 
-        await self._send(PacketType.LOGIN, self.auth)
+        await self._send(PacketTypes.LOGIN, self.auth)
 
     async def _read(self, n_bytes):
         data = b''
@@ -44,7 +44,7 @@ class Client:
         in_type = struct.unpack('<ii', in_msg[:8])[0]
         in_data, in_pad = in_msg[8:-2], in_msg[-2:]
 
-        if in_type == PacketType.INVALID_AUTH: raise Exception('Invalid authentication')
+        if in_type == PacketTypes.INVALID_AUTH: raise Exception('Invalid authentication')
         if in_pad != b'\x00\x00': raise Exception('Invalid response')
 
         return in_data.decode('utf8'), in_type
@@ -53,7 +53,7 @@ class Client:
         if not self._setup_task.done():
             await self._setup_task
 
-        return await self._send(PacketType.COMMAND, msg)
+        return await self._send(PacketTypes.COMMAND, msg)
 
     async def close(self):
         self._writer.close()
