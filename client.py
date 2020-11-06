@@ -15,13 +15,16 @@ class RCONClient:
         self._writer = None
 
         self.setup_task = asyncio.get_event_loop().create_task(self._setup())
+        self.setup_task.start()
 
     async def _setup(self):
+        print('setting up')
         self._reader, self._writer = await asyncio.open_connection(self.host, self.port)
 
         await self._send(3, self.auth)
 
     async def _read(self, n_bytes):
+        print('reading')
         data = b''
 
         while len(data) < n_bytes:
@@ -30,6 +33,7 @@ class RCONClient:
         return data
 
     async def _send(self, _type, msg):  # for _types: 3=login/authenticate, 2=command, 0=cmd response, -1=invalid auth
+        print('sending')
         out_msg = struct.pack('<li', 0, _type) + msg.encode('utf8') + b'\x00\x00'
         out_len = struct.pack('<i', len(out_msg))
         self._writer.write(out_len + out_msg)
