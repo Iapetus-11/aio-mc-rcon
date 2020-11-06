@@ -29,6 +29,7 @@ asyncio.run(main())
 * Arguments:
   * `host: str` The hostname/ip of the server to connect to, if no port is specified, the default port (25575) is used.
   * `auth: str` The authentication/password for the rcon server (This is `rcon.password` in the `server.properties` file)
+  * `timeout: int` How long to wait in seconds for a connection to the server
 * Coroutines:
   * `send_cmd(cmd: str)` - where `cmd` is the command to be sent to the server
   * `close()` - close the connection to the Minecraft server
