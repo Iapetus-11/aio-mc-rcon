@@ -58,5 +58,9 @@ class Client:
         return await self._send(PacketTypes.COMMAND, cmd)
 
     async def close(self) -> None:
-        self._writer.close()
-        await self._writer.wait_closed()
+        if not self._closed:
+            self._writer.close()
+            await self._writer.wait_closed()
+
+            self._reader = None
+            self._writer = None
