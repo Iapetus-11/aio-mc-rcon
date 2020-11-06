@@ -14,11 +14,12 @@ class RCONClient:
         self._reader = None
         self._writer = None
 
-        self._setup_task = asyncio.get_event_loop().create_task(self._setup())
+        self._loop = asyncio.get_event_loop()
+        self._setup_task = self._loop.create_task(self._setup())
 
     async def _setup(self):
         print('setting up')
-        self._reader, self._writer = await asyncio.open_connection(self.host, self.port)
+        self._reader, self._writer = await asyncio.open_connection(self.host, self.port, self._loop)
 
         await self._send(3, self.auth)
 
