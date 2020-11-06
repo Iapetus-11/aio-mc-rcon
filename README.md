@@ -1,2 +1,9 @@
 # AioMCRCON
-An async RCON client for Minecraft Java Edition
+An async RCON client written in Python for Minecraft Java Edition servers
+
+
+## Example Usage
+```py
+async def main():
+  pass
+```
