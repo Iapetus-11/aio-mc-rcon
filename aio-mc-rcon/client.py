@@ -42,16 +42,13 @@ class Client:
         out_len = struct.pack('<i', len(out_msg))
         self._writer.write(out_len + out_msg)
 
-        in_len = struct.unpack('<i', await self._read(4))
-        in_msg = await self._read(in_len[0])
+        in_msg = await self._read(struct.unpack('<i', await self._read(4))[0])
+        if in_msg[-2:] != b'\x00\x00': raise InvalidDataReceivedError
 
         in_type = struct.unpack('<ii', in_msg[:8])[0]
-        in_data, in_pad = in_msg[8:-2], in_msg[-2:]
-
         if in_type == PacketTypes.INVALID_AUTH: raise InvalidAuthError
-        if in_pad != b'\x00\x00': raise InvalidDataReceivedError
 
-        return in_data.decode('utf8'), in_type
+        return in_msg[8:-2].decode('utf8'), in_type
 
     async def send_command(self, msg):
         if not self._setup_task.done():
