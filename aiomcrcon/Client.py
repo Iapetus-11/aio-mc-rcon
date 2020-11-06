@@ -21,12 +21,6 @@ class Client:
 
         self._setup_task = asyncio.get_event_loop().create_task(self._setup())
 
-    async def __aenter__(self):
-        return self
-
-    async def __aexit__(self, exc_type, exc, tb):
-        await self.close()
-
     async def _setup(self) -> None:
         try:
             self._reader, self._writer = await asyncio.open_connection(self.host, self.port)
