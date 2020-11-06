@@ -1,6 +1,8 @@
 import asyncio
 import struct
 
+import .Types as PacketType
+
 
 class Client:
     """Base remote console client"""
@@ -21,7 +23,7 @@ class Client:
     async def _setup(self):
         self._reader, self._writer = await asyncio.open_connection(self.host, self.port)
 
-        await self._send(3, self.auth)
+        await self._send(PacketType.LOGIN, self.auth)
 
     async def _read(self, n_bytes):
         data = b''
@@ -38,18 +40,18 @@ class Client:
 
         in_len = struct.unpack('<i', await self._read(4))
         in_msg = await self._read(in_len[0])
-
+        
         in_id = struct.unpack('<ii', in_msg[:8])[0]
         in_data, in_pad = in_msg[8:-2], in_msg[-2:]
 
-        if in_id == -1: raise Exception('Invalid authentication')
+        if in_id == PacketType.INVALID_AUTH: raise Exception('Invalid authentication')
         if in_pad != b'\x00\x00': raise Exception('Invalid response')
 
         return in_data.decode('utf8')
 
     async def send_command(self, msg):
         await self._setup_task
-        return await self._send(2, msg)
+        return await self._send(PacketType.COMMAND, msg)
 
     async def close(self):
         self._writer.close()
