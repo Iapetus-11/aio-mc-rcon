@@ -1,3 +1,3 @@
 from .Client import Client
-import .Errors as Errors
+from .Errors import * as Errors
 from .Types import *
