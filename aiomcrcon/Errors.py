@@ -1,4 +1,13 @@
 
+class ConnectionFailedError(Exception):
+    """Raised when the client cannot connect to the given server"""
+
+    def __init__(self, reason):
+        self.reason = reason
+
+    def __str__(self):
+        return self.reason
+
 class InvalidAuthError(Exception):
     """Raised when the password is incorrect"""
 
@@ -11,6 +20,7 @@ class InvalidDataReceivedError(Exception):
 
     def __str__(self):
         return 'Invalid data was received from the server'
+
 
 class ClientClosedError(Exception):
     """Raised when a function is used when the client is supposed to be closed"""
