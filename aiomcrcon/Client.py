@@ -80,9 +80,6 @@ class Client:
         if self._closed: raise ClientClosedError
         if not self._setup: raise ClientNotSetupError
 
-        if not self._setup_task.done():
-            await self._setup_task
-
         return await self._send(PacketTypes.COMMAND, cmd)
 
     async def close(self) -> None:
