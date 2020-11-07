@@ -23,6 +23,7 @@ class Client:
 
         self._loop = asyncio.get_event_loop() if loop is None else loop
 
+        self._setup = False
         self._closed = False
 
     async def setup(self) -> None:
@@ -67,8 +68,8 @@ class Client:
         return in_msg[8:-2].decode('utf8'), in_type
 
     async def send_cmd(self, cmd: str) -> tuple:  # returns ('response from server': str, packet type from server: int)
-        if self._closed:
-            raise ClientClosedError
+        if self._closed: raise ClientClosedError
+        if not self._setup: raise ClientNotSetupError
 
         if not self._setup_task.done():
             await self._setup_task
@@ -76,7 +77,7 @@ class Client:
         return await self._send(PacketTypes.COMMAND, cmd)
 
     async def close(self) -> None:
-        if not self._closed:
+        if not self._closed and self._setup:
             self._writer.close()
             await self._writer.wait_closed()
 
@@ -84,3 +85,4 @@ class Client:
             self._writer = None
 
             self._closed = True
+            self._setup = False
