@@ -58,6 +58,7 @@ class Client:
         out_msg = struct.pack('<li', 0, _type) + msg.encode('utf8') + b'\x00\x00'
         out_len = struct.pack('<i', len(out_msg))
         self._writer.write(out_len + out_msg)
+        await self._writer.drain()
 
         in_msg = await self._read(struct.unpack('<i', await self._read(4))[0])
         if in_msg[-2:] != b'\x00\x00': raise InvalidDataReceivedError
