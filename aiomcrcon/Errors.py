@@ -27,3 +27,9 @@ class ClientClosedError(Exception):
 
     def __str__(self):
         return 'The client is closed'
+
+class ClientNotSetupError(Exception):
+    """Raised when a function is used when the client setup() function hasn't been called"""
+
+    def __str__(self):
+        return 'The client hasn\'t been setup. (Looks like you forgot to call the setup() coroutine)'
