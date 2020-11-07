@@ -15,6 +15,8 @@ import asyncio
 async def main():
   client = aiomcrcon.Client('1.2.3.4:25575', 'super-secret-password')
 
+  await client.setup()
+
   output = await client.send_cmd('list')
   print(output)
 

@@ -23,25 +23,11 @@ class Client:
 
         self._loop = asyncio.get_event_loop() if loop is None else loop
 
-        self._setup_task = self._loop.create_task(self._setup())
-
         self._closed = False
 
-    async def _setup(self) -> None:
+    async def setup(self) -> None:
         try:
-            result = await asyncio.gather(
-                asyncio.wait_for(
-                    asyncio.open_connection(self.host, self.port, loop=self._loop), timeout=self.timeout, loop=self._loop
-                ),
-                loop=self._loop, return_exceptions=True
-            )
-
-            result = result[0]
-
-            if isinstance(result, Exception):
-                raise result
-
-            self._reader, self._writer = result
+            self._reader, self._writer = await asyncio.wait_for(asyncio.open_connection(self.host, self.port, loop=self._loop), timeout=self.timeout, loop=self._loop)
         except TimeoutError:
             self._closed = True
             raise ConnectionFailedError('A timeout occurred while attempting to connect to the server')
