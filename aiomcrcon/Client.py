@@ -2,7 +2,7 @@ import asyncio
 import struct
 
 from .Types import PacketTypes
-from .Errors import ConnectionFailedError, InvalidAuthError, InvalidDataReceivedError, ClientClosedError
+from .Errors import ConnectionFailedError, InvalidAuthError, InvalidDataReceivedError, ClientClosedError, ClientNotSetupError
 
 
 class Client:
@@ -27,6 +27,9 @@ class Client:
         self._closed = False
 
     async def setup(self) -> None:
+        if self._closed: raise ClientClosedError
+        if self._setup: return
+
         try:
             self._reader, self._writer = await asyncio.wait_for(asyncio.open_connection(self.host, self.port, loop=self._loop), timeout=self.timeout, loop=self._loop)
         except TimeoutError:
@@ -42,7 +45,13 @@ class Client:
             self._closed = True
             raise ConnectionFailedError(f'The connection failed for an unknown reason: {e}')
 
-        await self._send(PacketTypes.LOGIN, self.auth)
+        try:
+            await self._send(PacketTypes.LOGIN, self.auth)
+        except Exception as e:
+            self._closed = True
+            raise e
+
+        self._setup = True
 
     async def _read(self, n_bytes: int) -> bytes:
         data = b''
@@ -85,4 +94,3 @@ class Client:
             self._writer = None
 
             self._closed = True
-            self._setup = False
