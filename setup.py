@@ -5,7 +5,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='aio-mc-rcon',
-    version='1.2.1',
+    version='1.2.2',
     author='Iapetus-11',
     description='An async library/wrapper for interacting with remote consoles on Minecraft Java Edition servers',
     long_description=long_description,

@@ -8,7 +8,7 @@ from .Errors import ConnectionFailedError, InvalidAuthError, InvalidDataReceived
 class Client:
     """Base remote console client"""
 
-    def __init__(self, host: str, auth: str, timeout: int = 5, *, loop: asyncio.ProactorEventLoop = None) -> None:  # host is a string like '0.0.0.0' or '0.0.0.0:25575', auth is a string (rcon.password in server.properties)
+    def __init__(self, host: str, auth: str, timeout: int = 5, *, loop = None) -> None:  # host is a string like '0.0.0.0' or '0.0.0.0:25575', auth is a string (rcon.password in server.properties)
         split = host.split(':')
 
         self.host = split[0]
