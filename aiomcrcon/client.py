@@ -32,8 +32,11 @@ class Client:
         self._closed = False
 
     async def setup(self) -> None:
-        if self._closed: raise ClientClosedError
-        if self._setup: return
+        if self._closed:
+            raise ClientClosedError
+            
+        if self._setup:
+            return
 
         try:
             self._reader, self._writer = await asyncio.wait_for(
@@ -78,10 +81,12 @@ class Client:
         await self._writer.drain()
 
         in_msg = await self._read(struct.unpack('<i', await self._read(4))[0])
-        if in_msg[-2:] != b'\x00\x00': raise InvalidDataReceivedError
+        if in_msg[-2:] != b'\x00\x00':
+            raise InvalidDataReceivedError
 
         in_type = struct.unpack('<ii', in_msg[:8])[0]
-        if in_type == PacketTypes.INVALID_AUTH: raise InvalidAuthError
+        if in_type == PacketTypes.INVALID_AUTH:
+            raise InvalidAuthError
 
         return in_msg[8:-2].decode('utf8'), in_type
 
