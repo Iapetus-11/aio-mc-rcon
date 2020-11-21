@@ -1,3 +1,7 @@
+"""
+Contains the base class for the RCON Client
+"""
+
 import asyncio
 import struct
 
