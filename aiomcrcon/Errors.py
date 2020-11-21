@@ -1,3 +1,7 @@
+"""
+Contains all the custom errors that can be raised by the client
+"""
+
 
 class ConnectionFailedError(Exception):
     """Raised when the client cannot connect to the given server"""
