@@ -34,7 +34,7 @@ class Client:
     async def setup(self) -> None:
         if self._closed:
             raise ClientClosedError
-            
+
         if self._setup:
             return
 
