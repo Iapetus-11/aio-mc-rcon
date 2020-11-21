@@ -99,8 +99,11 @@ class Client:
     async def send_cmd(self, cmd: str) -> tuple:  # returns ('response from server': str, packet type from server: int)
         """Helper function for sending a command to the server"""
 
-        if self._closed: raise ClientClosedError
-        if not self._setup: raise ClientNotSetupError
+        if self._closed:
+            raise ClientClosedError
+
+        if not self._setup:
+            raise ClientNotSetupError
 
         return await self._send(PacketTypes.COMMAND, cmd)
 
