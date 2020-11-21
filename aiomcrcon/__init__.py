@@ -2,6 +2,6 @@
 Import necessary items and declare version
 """
 
-from .Client import Client
-from .Errors import *
-from .Types import PacketTypes
+from .client import Client
+from .errors import *
+from .types import PacketTypes
