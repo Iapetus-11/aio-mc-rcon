@@ -1,3 +1,4 @@
+from aiomcrcon import __version__
 import setuptools
 
 with open('README.md', 'r') as fh:
@@ -5,7 +6,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='aio-mc-rcon',
-    version='1.3.2',
+    version=__version__,
     author='Iapetus-11',
     description='An async library/wrapper for interacting with remote consoles on Minecraft Java Edition servers',
     long_description=long_description,
