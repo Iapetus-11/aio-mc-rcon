@@ -36,7 +36,11 @@ class Client:
         if self._setup: return
 
         try:
-            self._reader, self._writer = await asyncio.wait_for(asyncio.open_connection(self.host, self.port, loop=self._loop), timeout=self.timeout, loop=self._loop)
+            self._reader, self._writer = await asyncio.wait_for(
+                asyncio.open_connection(self.host, self.port, loop=self._loop),
+                timeout=self.timeout,
+                loop=self._loop
+            )
         except TimeoutError:
             self._closed = True
             raise ConnectionFailedError('A timeout occurred while attempting to connect to the server')
