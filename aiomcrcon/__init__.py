@@ -2,7 +2,7 @@
 Import necessary items and declare version
 """
 
-__version__ = '1.3.2'
+__version__ = '2.0.0'
 
 from .client import Client
 from .errors import *
