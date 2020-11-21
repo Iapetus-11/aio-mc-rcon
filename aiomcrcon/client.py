@@ -6,7 +6,7 @@ import asyncio
 import struct
 
 from .types import PacketTypes
-from .errors import ConnectionFailedError, InvalidAuthError, InvalidDataReceivedError, ClientClosedError, ClientNotSetupError
+from .errors import *
 
 
 class Client:
