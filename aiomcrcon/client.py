@@ -32,6 +32,8 @@ class Client:
         self._closed = False
 
     async def setup(self) -> None:
+        """Setup and login the client"""
+
         if self._closed:
             raise ClientClosedError
 
@@ -66,6 +68,8 @@ class Client:
         self._setup = True
 
     async def _read(self, n_bytes: int) -> bytes:
+        """Read data from the server"""
+
         data = b''
 
         while len(data) < n_bytes:
@@ -75,6 +79,8 @@ class Client:
 
     # for _types: 3=login/authenticate, 2=command, 0=cmd response, -1=invalid auth
     async def _send(self, _type: int, msg: str) -> tuple:  # returns ('response from server': str, packet type from server: int)
+        """Send data to the server, returns the server response and response packet type"""
+
         out_msg = struct.pack('<li', 0, _type) + msg.encode('utf8') + b'\x00\x00'
         out_len = struct.pack('<i', len(out_msg))
         self._writer.write(out_len + out_msg)
@@ -91,12 +97,16 @@ class Client:
         return in_msg[8:-2].decode('utf8'), in_type
 
     async def send_cmd(self, cmd: str) -> tuple:  # returns ('response from server': str, packet type from server: int)
+        """Helper function for sending a command to the server"""
+
         if self._closed: raise ClientClosedError
         if not self._setup: raise ClientNotSetupError
 
         return await self._send(PacketTypes.COMMAND, cmd)
 
     async def close(self) -> None:
+        """Close the client and the connection to the server"""
+
         if not self._closed and self._setup:
             self._writer.close()
             await self._writer.wait_closed()
