@@ -5,8 +5,8 @@ Contains the base class for the RCON Client
 import asyncio
 import struct
 
-from .Types import PacketTypes
-from .Errors import ConnectionFailedError, InvalidAuthError, InvalidDataReceivedError, ClientClosedError, ClientNotSetupError
+from .types import PacketTypes
+from .errors import ConnectionFailedError, InvalidAuthError, InvalidDataReceivedError, ClientClosedError, ClientNotSetupError
 
 
 class Client:
