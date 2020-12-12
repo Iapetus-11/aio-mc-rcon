@@ -112,7 +112,11 @@ class Client:
 
         if not self._closed and self._setup:
             self._writer.close()
-            await self._writer.wait_closed()
+
+            try:
+                await self._writer.wait_closed()
+            except TimeoutError:
+                pass
 
             self._reader = None
             self._writer = None
