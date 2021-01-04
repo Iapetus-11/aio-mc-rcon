@@ -1,4 +1,4 @@
-# Aio-MC-RCON
+# Aio-MC-RCON ![Code Quality](https://www.codefactor.io/repository/github/iapetus-11/aio-mc-rcon/badge)
 An async RCON client/wrapper written in Python for Minecraft Java Edition servers
 
 ## Installation
