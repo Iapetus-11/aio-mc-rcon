@@ -1,4 +1,4 @@
-# Aio-MC-RCON ![Code Quality](https://www.codefactor.io/repository/github/iapetus-11/aio-mc-rcon/badge) ![PYPI Version](https://img.shields.io/pypi/v/aio-mc-rcon.svg) ![PYPI Downloads](https://img.shields.io/pypi/dw/aio-mc-rcon?color=64b594) ![Views](https://api.ghprofile.me/view?username=iapetus-11.aio-mc-rcon&color=51B780&label=views&style=flat)
+# Aio-MC-RCON ![Code Quality](https://www.codefactor.io/repository/github/iapetus-11/aio-mc-rcon/badge) ![PYPI Version](https://img.shields.io/pypi/v/aio-mc-rcon.svg) ![PYPI Downloads](https://img.shields.io/pypi/dw/aio-mc-rcon?color=0FAE6E) ![Views](https://api.ghprofile.me/view?username=iapetus-11.aio-mc-rcon&color=0FAE6E&label=views&style=flat)
 An async RCON client/wrapper written in Python for Minecraft Java Edition servers
 
 ## Installation
