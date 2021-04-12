@@ -83,3 +83,13 @@ class Client:
         """Sends a command to the server."""
 
         return await self._send_msg(Messagetype.COMMAND, cmd)
+
+    async def close(self):
+        if self.ready:
+            self._writer.close()
+            await self._writer.wait_closed()
+
+            self._reader = None
+            self._writer = None
+            
+            self._ready = False
