@@ -68,7 +68,7 @@ class Client:
         await self._writer.drain()
 
         # read + unpack length of incoming packet
-        in_len = struct.unpack("<i", *(await self._reader.read(4)))
+        in_len = struct.unpack("<i", (await self._reader.read(4)))
 
         # read rest of packet data
         in_data = await self._reader.read(in_len)
