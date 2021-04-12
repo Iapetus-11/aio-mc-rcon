@@ -12,28 +12,30 @@ class ConnectionFailedError(Exception):
     def __str__(self):
         return self.reason
 
+
 class InvalidAuthError(Exception):
     """Raised when the password is incorrect"""
 
     def __str__(self):
-        return 'The provided authentication/password was invalid'
+        return "The provided authentication/password was invalid"
 
 
 class InvalidDataReceivedError(Exception):
     """Raised when the client receives invalid data from the server"""
 
     def __str__(self):
-        return 'Invalid data was received from the server'
+        return "Invalid data was received from the server"
 
 
 class ClientClosedError(Exception):
     """Raised when a function is used when the client is supposed to be closed"""
 
     def __str__(self):
-        return 'The client is closed'
+        return "The client is closed"
+
 
 class ClientNotSetupError(Exception):
     """Raised when a function is used when the client setup() function hasn't been called"""
 
     def __str__(self):
-        return 'The client hasn\'t been setup. (Looks like you forgot to call the setup() coroutine)'
+        return "The client hasn't been setup. (Looks like you forgot to call the setup() coroutine)"
