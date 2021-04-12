@@ -89,7 +89,7 @@ class Client:
     async def send_cmd(self, cmd: str, timeout=2) -> tuple:
         """Sends a command to the server."""
 
-        return await asyncio.wait_for(self._send_msg(Messagetype.COMMAND, cmd), timeout)
+        return await asyncio.wait_for(self._send_msg(MessageType.COMMAND, cmd), timeout)
 
     async def close(self):
         """Closes the connection between the client and the server."""
