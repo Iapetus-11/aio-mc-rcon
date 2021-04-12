@@ -27,3 +27,6 @@ class Client:
             raise RCONConnectionError("The remote server refused the connection.", e)
         except Exception as e:
             raise RCONConnectionError("The connection failed for an unknown reason.", e)
+
+    async def _send(self, type_: int, msg: str) -> tuple:
+        raise NotImplementedError
