@@ -27,6 +27,7 @@ class Client:
 
     async def __aenter__(self, timeout=2):
         await self.connect(timeout)
+        return self
 
     async def __aexit__(self, exc_type, exc, tb):
         await self.close()
