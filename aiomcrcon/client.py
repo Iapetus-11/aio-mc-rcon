@@ -93,7 +93,7 @@ class Client:
     async def close(self):
         """Closes the connection between the client and the server."""
 
-        if self.ready:
+        if self._ready:
             self._writer.close()
             await self._writer.wait_closed()
 
