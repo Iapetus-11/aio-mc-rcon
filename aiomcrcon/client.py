@@ -54,9 +54,6 @@ class Client:
     async def _send_msg(self, type_: int, msg: str) -> tuple:
         """Sends data to the server, and returns the response."""
 
-        if not self._ready:
-            raise ClientNotConnectedError
-
         # randomly generate request id
         req_id = random.randint(0, 2147483647)
 
@@ -92,6 +89,9 @@ class Client:
 
     async def send_cmd(self, cmd: str, timeout=2) -> tuple:
         """Sends a command to the server."""
+
+        if not self._ready:
+            raise ClientNotConnectedError
 
         return await asyncio.wait_for(self._send_msg(MessageType.COMMAND, cmd), timeout)
 
