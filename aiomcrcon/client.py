@@ -4,6 +4,8 @@ from .errors import RCONConnectionError
 
 
 class Client:
+    """The base class for creating an RCON client."""
+
     def __init__(self, host: str, port: int, password: str, timeout: float = 2) -> None:
         self.host = host
         self.port = port
@@ -16,6 +18,8 @@ class Client:
         self._ready = False
 
     async def connect(self):
+        """Sets up the connection between the client and server."""
+
         if self._ready:
             return
 
@@ -29,4 +33,6 @@ class Client:
             raise RCONConnectionError("The connection failed for an unknown reason.", e)
 
     async def _send(self, type_: int, msg: str) -> tuple:
+        """Sends data to the server."""
+
         raise NotImplementedError
