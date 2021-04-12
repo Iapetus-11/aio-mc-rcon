@@ -47,6 +47,10 @@ class Client:
         except Exception as e:
             raise RCONConnectionError("The connection failed for an unknown reason.", e)
 
+        await self._send_msg(MessageType.LOGIN, self.password)
+
+        self._ready = True
+
     async def _send_msg(self, type_: int, msg: str) -> tuple:
         """Sends data to the server, and returns the response."""
 
