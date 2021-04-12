@@ -1,130 +1,108 @@
-"""
-Contains the base class for the RCON Client
-"""
-
 import asyncio
+import random
 import struct
 
-from .types import PacketTypes
 from .errors import *
 
 
+class MessageType:
+    LOGIN = 3
+    COMMAND = 2
+    RESPONSE = 0
+    INVALID_AUTH = -1
+
+
 class Client:
-    """Base remote console client"""
+    """The base class for creating an RCON client."""
 
-    # host is a string like '0.0.0.0' or '0.0.0.0:25575', auth is a string (rcon.password in server.properties)
-    def __init__(self, host: str, auth: str, timeout: int = 5, *, loop=None) -> None:
-        split = host.split(":")
-
-        self.host = split[0]
-        self.port = int(split[1]) if len(split) > 1 else 25575
-
-        self.auth = auth
-
-        self.timeout = timeout
+    def __init__(self, host: str, port: int, password: str) -> None:
+        self.host = host
+        self.port = port
+        self.password = password
 
         self._reader = None
         self._writer = None
 
-        self._loop = asyncio.get_event_loop() if loop is None else loop
+        self._ready = False
 
-        self._setup = False
-        self._closed = False
+    async def __aenter__(self, timeout=2):
+        await self.connect(timeout)
+        return self
 
-    async def setup(self) -> None:
-        """Setup and login the client"""
+    async def __aexit__(self, exc_type, exc, tb):
+        await self.close()
 
-        if self._closed:
-            raise ClientClosedError
+    async def connect(self, timeout=2):
+        """Sets up the connection between the client and server."""
 
-        if self._setup:
+        if self._ready:
             return
 
         try:
-            self._reader, self._writer = await asyncio.wait_for(
-                asyncio.open_connection(self.host, self.port, loop=self._loop), timeout=self.timeout, loop=self._loop
-            )
-        except TimeoutError:
-            self._closed = True
-            raise ConnectionFailedError("A timeout occurred while attempting to connect to the server")
-        except asyncio.TimeoutError:
-            self._closed = True
-            raise ConnectionFailedError("A timeout occurred while attempting to connect to the server")
-        except ConnectionRefusedError:
-            self._closed = True
-            raise ConnectionFailedError("The connection was refused by the server")
+            self._reader, self._writer = await asyncio.wait_for(asyncio.open_connection(self.host, self.port), timeout)
+        except (asyncio.TimeoutError, TimeoutError) as e:
+            raise RCONConnectionError("A timeout occurred whilst attempting to connect to the server.", e)
+        except ConnectionRefusedError as e:
+            raise RCONConnectionError("The remote server refused the connection.", e)
         except Exception as e:
-            self._closed = True
-            raise ConnectionFailedError(f"The connection failed for an unknown reason: {e}")
+            raise RCONConnectionError("The connection failed for an unknown reason.", e)
 
-        try:
-            await self._send(PacketTypes.LOGIN, self.auth)
-        except Exception as e:
-            self._closed = True
-            raise e
+        await self._send_msg(MessageType.LOGIN, self.password)
 
-        self._setup = True
+        self._ready = True
 
-    async def _read(self, n_bytes: int) -> bytes:
-        """Read data from the server"""
+    async def _send_msg(self, type_: int, msg: str) -> tuple:
+        """Sends data to the server, and returns the response."""
 
-        read_count = 0
-        data = b""
+        # randomly generate request id
+        req_id = random.randint(0, 2147483647)
 
-        while len(data) < n_bytes:
-            assert read_count <= 4096
+        # pack request id, packet type, and the actual message
+        packet_data = struct.pack("<ii", req_id, type_) + msg.encode("utf8") + b"\x00\x00"
 
-            data += await self._reader.read(n_bytes - len(data))
-            read_count += 1
+        # pack length of packet + rest of packet data
+        packet = struct.pack("<i", len(packet_data)) + packet_data
 
-            await asyncio.sleep(0)
-
-        return data
-
-    # for _types: 3=login/authenticate, 2=command, 0=cmd response, -1=invalid auth
-    async def _send(
-        self, _type: int, msg: str
-    ) -> tuple:  # returns ('response from server': str, packet type from server: int)
-        """Send data to the server, returns the server response and response packet type"""
-
-        out_msg = struct.pack("<li", 0, _type) + msg.encode("utf8") + b"\x00\x00"
-        out_len = struct.pack("<i", len(out_msg))
-        self._writer.write(out_len + out_msg)
+        # send the data to the server
+        self._writer.write(packet)
         await self._writer.drain()
 
-        in_msg = await self._read(struct.unpack("<i", await self._read(4))[0])
-        if in_msg[-2:] != b"\x00\x00":
-            raise InvalidDataReceivedError
+        # read + unpack length of incoming packet
+        in_len = struct.unpack("<i", (await self._reader.read(4)))[0]
 
-        in_type = struct.unpack("<ii", in_msg[:8])[0]
-        if in_type == PacketTypes.INVALID_AUTH:
-            raise InvalidAuthError
+        # read rest of packet data
+        in_data = await self._reader.read(in_len)
 
-        return in_msg[8:-2].decode("utf8"), in_type
+        if not in_data.endswith(b"\x00\x00"):
+            raise ValueError("Invalid data received from server.")
 
-    async def send_cmd(self, cmd: str) -> tuple:  # returns ('response from server': str, packet type from server: int)
-        """Helper function for sending a command to the server"""
+        # decode the incoming request id and packet type
+        in_type, in_req_id = struct.unpack("<ii", in_data[0:8])
 
-        if self._closed:
-            raise ClientClosedError
+        if in_type == MessageType.INVALID_AUTH:
+            raise IncorrectPasswordError
 
-        if not self._setup:
-            raise ClientNotSetupError
+        # decode the received message
+        in_msg = in_data[8:-2].decode("utf8")
 
-        return await self._send(PacketTypes.COMMAND, cmd)
+        return in_msg, in_type
 
-    async def close(self) -> None:
-        """Close the client and the connection to the server"""
+    async def send_cmd(self, cmd: str, timeout=2) -> tuple:
+        """Sends a command to the server."""
 
-        if not self._closed and self._setup:
+        if not self._ready:
+            raise ClientNotConnectedError
+
+        return await asyncio.wait_for(self._send_msg(MessageType.COMMAND, cmd), timeout)
+
+    async def close(self):
+        """Closes the connection between the client and the server."""
+
+        if self._ready:
             self._writer.close()
-
-            try:
-                await self._writer.wait_closed()
-            except TimeoutError:
-                pass
+            await self._writer.wait_closed()
 
             self._reader = None
             self._writer = None
 
-            self._closed = True
+            self._ready = False
