@@ -2,7 +2,7 @@
 An async RCON client/wrapper written in Python for Minecraft Java Edition servers
 
 ## Installation
-```bash
+```
 pip install -U aio-mc-rcon
 ```
 
