@@ -25,6 +25,12 @@ class Client:
 
         self._ready = False
 
+    async def __aenter__(self, timeout=2):
+        await self.connect(timeout)
+
+    async def __aexit__(self, exc_type, exc, tb):
+        await self.close()
+
     async def connect(self, timeout=2):
         """Sets up the connection between the client and server."""
 
@@ -86,6 +92,7 @@ class Client:
 
     async def close(self):
         """Closes the connection between the client and the server."""
+        
         if self.ready:
             self._writer.close()
             await self._writer.wait_closed()
