@@ -14,11 +14,10 @@ class MessageType:
 class Client:
     """The base class for creating an RCON client."""
 
-    def __init__(self, host: str, port: int, password: str, timeout: float = 2) -> None:
+    def __init__(self, host: str, port: int, password: str) -> None:
         self.host = host
         self.port = port
         self.password = password
-        self.timeout = timeout
 
         self._reader = None
         self._writer = None
@@ -91,5 +90,5 @@ class Client:
 
             self._reader = None
             self._writer = None
-            
+
             self._ready = False
