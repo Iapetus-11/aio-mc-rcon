@@ -24,14 +24,14 @@ class Client:
 
         self._ready = False
 
-    async def connect(self):
+    async def connect(self, timeout=2):
         """Sets up the connection between the client and server."""
 
         if self._ready:
             return
 
         try:
-            self._reader, self._writer = await asyncio.wait_for(asyncio.open_connection(self.host, self.port))
+            self._reader, self._writer = await asyncio.wait_for(asyncio.open_connection(self.host, self.port), timeout)
         except (asyncio.TimeoutError, TimeoutError) as e:
             raise RCONConnectionError("A timeout occurred whilst attempting to connect to the server.", e)
         except ConnectionRefusedError as e:
@@ -55,7 +55,7 @@ class Client:
         packet = struct.pack("<i", len(packet_data)) + packet_data
 
         # send the data to the server
-        await self._writer.write(packet)
+        self._writer.write(packet)
         await self._writer.drain()
 
         # read + unpack length of incoming packet
@@ -78,10 +78,10 @@ class Client:
 
         return in_msg, in_type
 
-    async def send_cmd(self, cmd: str) -> tuple:
+    async def send_cmd(self, cmd: str, timeout=2) -> tuple:
         """Sends a command to the server."""
 
-        return await self._send_msg(Messagetype.COMMAND, cmd)
+        return await asyncio.wait_for(self._send_msg(Messagetype.COMMAND, cmd), timeout)
 
     async def close(self):
         if self.ready:
