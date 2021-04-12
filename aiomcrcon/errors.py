@@ -7,6 +7,7 @@ class RCONConnectionError(Exception):
         self.message = msg
         self.error = error
 
+
 class ClientNotConnectedError(Exception):
     """Raised when an IO method is used when the Client isn't connected."""
 

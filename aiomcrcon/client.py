@@ -11,6 +11,7 @@ class MessageType:
     RESPONSE = 0
     INVALID_AUTH = -1
 
+
 class Client:
     """The base class for creating an RCON client."""
 
