@@ -80,4 +80,6 @@ class Client:
         return in_msg, in_type
 
     async def send_cmd(self, cmd: str) -> tuple:
+        """Sends a command to the server."""
+
         return await self._send_msg(Messagetype.COMMAND, cmd)
