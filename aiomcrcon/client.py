@@ -2,7 +2,7 @@ import asyncio
 import random
 import struct
 
-from .errors import RCONConnectionError, IncorrectPasswordError
+from .errors import *
 
 
 class MessageType:
