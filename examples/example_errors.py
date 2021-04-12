@@ -19,7 +19,7 @@ async def main():
 
     try:
         response = await client.send_cmd(command)
-    except ClientNotConnectedError:
+    except aiomcrcon.ClientNotConnectedError:
         print("The client was not connected to the server for some reason?")
         return
 
