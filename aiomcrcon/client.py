@@ -77,7 +77,7 @@ class Client:
             raise ValueError("Invalid data received from server.")
 
         # decode the incoming request id and packet type
-        in_req_id, in_type = struct.unpack("<ii", in_data[0:8])
+        in_type, in_req_id = struct.unpack("<ii", in_data[0:8])
 
         if in_type == MessageType.INVALID_AUTH:
             raise IncorrectPasswordError
