@@ -7,7 +7,7 @@ pip install -U aio-mc-rcon
 ```
 
 ## Example Usage
-- See the [examples folder](examples).
+- See the [examples folder](https://github.com/Iapetus-11/aio-mc-rcon/tree/main/examples).
 
 ## Documentation
 #### *class* aiomcrcon.**Client**(host: *str*, port: *int*, password: *str*):
