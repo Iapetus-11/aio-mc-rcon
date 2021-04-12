@@ -1,4 +1,3 @@
-
 class RCONConnectionError(Exception):
     """Raised when the Client.connect() method fails."""
 
