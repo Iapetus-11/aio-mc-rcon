@@ -68,10 +68,16 @@ class Client:
     async def _read(self, n_bytes: int) -> bytes:
         """Read data from the server"""
 
+        read_count = 0
         data = b""
 
         while len(data) < n_bytes:
+            assert read_count <= 4096
+
             data += await self._reader.read(n_bytes - len(data))
+            read_count += 1
+
+            await asyncio.sleep(0)
 
         return data
 
