@@ -92,7 +92,7 @@ class Client:
         if not self._ready:
             raise ClientNotConnectedError
         value = await asyncio.wait_for(self._send_msg(MessageType.COMMAND, cmd), timeout)
-        if type(strip_colors) == bool and strip_colors:
+        if isinstance(strip_colors, bool) and strip_colors:
             value = list(value)
             value[0] = re.sub("§.", "", value[0])
             return tuple(value)
