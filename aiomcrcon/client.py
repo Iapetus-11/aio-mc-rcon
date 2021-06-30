@@ -87,13 +87,16 @@ class Client:
 
         return in_msg, in_type
 
-    async def send_cmd(self, cmd: str, timeout=2) -> tuple:
+    async def send_cmd(self, cmd: str, timeout=2, strip_colors = True) -> tuple:
         """Sends a command to the server."""
-
         if not self._ready:
             raise ClientNotConnectedError
-
-        return await asyncio.wait_for(self._send_msg(MessageType.COMMAND, cmd), timeout)
+        value = await asyncio.wait_for(self._send_msg(MessageType.COMMAND, cmd), timeout)
+        if type(strip_colors) == bool and strip_colors:
+            value = list(value)
+            value[0] = re.sub("§.", "", value[0])
+            return tuple(value)
+        return value
 
     async def close(self):
         """Closes the connection between the client and the server."""
