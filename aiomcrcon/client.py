@@ -79,7 +79,7 @@ class Client:
                 break
             in_tlen += len(in_tmp)
             in_arr.append(in_tmp)
-        in_data = b''.join(in_arr)
+        in_data = b"".join(in_arr)
 
         if len(in_data) != in_len or not in_data.endswith(b"\x00\x00"):
             raise ValueError("Invalid data received from server.")
