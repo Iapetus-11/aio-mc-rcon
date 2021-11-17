@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "aio-mc-rcon"
-version = "3.1.0"
+version = "3.1.1"
 description = "An async library for utilizing remote console on Minecraft Java Edition servers"
 authors = ["Milo Weinberg <iapetus011@gmail.com>"]
 license = "MIT"
