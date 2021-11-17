@@ -73,12 +73,16 @@ class Client:
         # read rest of packet data
         in_arr = []
         in_tlen = 0
+        
         while in_tlen < in_len:
             in_tmp = await self._reader.read(in_len - in_tlen)
+
             if not in_tmp:
                 break
+
             in_tlen += len(in_tmp)
             in_arr.append(in_tmp)
+
         in_data = b"".join(in_arr)
 
         if len(in_data) != in_len or not in_data.endswith(b"\x00\x00"):
