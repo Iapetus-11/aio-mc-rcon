@@ -1,11 +1,12 @@
 import asyncio
 import random
 import struct
+import enum
 
 from .errors import *
 
 
-class MessageType:
+class MessageType(enum.IntEnum):
     LOGIN = 3
     COMMAND = 2
     RESPONSE = 0
@@ -73,7 +74,7 @@ class Client:
         # read rest of packet data
         in_arr = []
         in_tlen = 0
-        
+
         while in_tlen < in_len:
             in_tmp = await self._reader.read(in_len - in_tlen)
 
