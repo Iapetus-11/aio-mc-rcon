@@ -73,7 +73,7 @@ class Client:
         # read rest of packet data
         in_arr = []
         in_tlen = 0
-        
+
         while in_tlen < in_len:
             in_tmp = await self._reader.read(in_len - in_tlen)
 
