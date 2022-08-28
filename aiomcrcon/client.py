@@ -43,9 +43,13 @@ class Client:
             return
 
         try:
-            self._reader, self._writer = await asyncio.wait_for(asyncio.open_connection(self.host, self.port), timeout)
+            self._reader, self._writer = await asyncio.wait_for(
+                asyncio.open_connection(self.host, self.port), timeout
+            )
         except (asyncio.TimeoutError, TimeoutError) as e:
-            raise RCONConnectionError("A timeout occurred whilst attempting to connect to the server.", e)
+            raise RCONConnectionError(
+                "A timeout occurred whilst attempting to connect to the server.", e
+            )
         except ConnectionRefusedError as e:
             raise RCONConnectionError("The remote server refused the connection.", e)
         except Exception as e:
