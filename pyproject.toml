@@ -1,11 +1,6 @@
-[tool.black]
-line-length = 127
-target-version = ['py36', 'py37', 'py38']
-include = '\.pyi?$'
-
 [tool.poetry]
 name = "aio-mc-rcon"
-version = "3.1.1"
+version = "3.2.0"
 description = "An async library for utilizing remote console on Minecraft Java Edition servers"
 authors = ["Milo Weinberg <iapetus011@gmail.com>"]
 license = "MIT"
@@ -15,7 +10,7 @@ keywords = ["rcon", "mcrcon", "async"]
 packages = [{ include = "aiomcrcon" }]
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.7"
 
 [tool.poetry.dev-dependencies]
 black = "^21.11b0"
@@ -24,3 +19,8 @@ flake8 = "^4.0.1"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 100
+target-version = ['py37', 'py38']
+include = '\.pyi?$'

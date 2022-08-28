@@ -1,9 +1,12 @@
+from __future__ import annotations
+
 import asyncio
 import random
 import struct
 import enum
+import typing as t
 
-from .errors import *
+from aiomcrcon.errors import ClientNotConnectedError, IncorrectPasswordError, RCONConnectionError
 
 
 class MessageType(enum.IntEnum):
@@ -26,14 +29,14 @@ class Client:
 
         self._ready = False
 
-    async def __aenter__(self, timeout=2):
+    async def __aenter__(self, timeout=2) -> Client:
         await self.connect(timeout)
         return self
 
-    async def __aexit__(self, exc_type, exc, tb):
+    async def __aexit__(self, exc_type: type, exc: Exception, tb: t.Any) -> None:
         await self.close()
 
-    async def connect(self, timeout=2):
+    async def connect(self, timeout: float = 2.0) -> None:
         """Sets up the connection between the client and server."""
 
         if self._ready:
@@ -52,7 +55,7 @@ class Client:
 
         self._ready = True
 
-    async def _send_msg(self, type_: int, msg: str) -> tuple:
+    async def _send_msg(self, type_: int, msg: str) -> t.Tuple[str, int]:
         """Sends data to the server, and returns the response."""
 
         # randomly generate request id
@@ -100,7 +103,7 @@ class Client:
 
         return in_msg, in_type
 
-    async def send_cmd(self, cmd: str, timeout=2) -> tuple:
+    async def send_cmd(self, cmd: str, timeout: float = 2.0) -> t.Tuple[str, int]:
         """Sends a command to the server."""
 
         if not self._ready:
@@ -108,7 +111,7 @@ class Client:
 
         return await asyncio.wait_for(self._send_msg(MessageType.COMMAND, cmd), timeout)
 
-    async def close(self):
+    async def close(self) -> None:
         """Closes the connection between the client and the server."""
 
         if self._ready:
