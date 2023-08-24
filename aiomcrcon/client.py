@@ -59,6 +59,20 @@ class Client:
 
         self._ready = True
 
+    async def _read(self, n: int) -> bytes:
+        out = b""
+
+        while len(out) < n:
+            received = await self._reader.read(n - len(out))
+
+            if not received:
+                break
+
+            out += received
+
+        return out
+
+
     async def _send_msg(self, type_: int, msg: str) -> t.Tuple[str, int]:
         """Sends data to the server, and returns the response."""
 
@@ -76,22 +90,10 @@ class Client:
         await self._writer.drain()
 
         # read + unpack length of incoming packet
-        in_len = struct.unpack("<i", (await self._reader.read(4)))[0]
+        in_len = struct.unpack("<i", await self._read(4))[0]
 
         # read rest of packet data
-        in_arr = []
-        in_tlen = 0
-
-        while in_tlen < in_len:
-            in_tmp = await self._reader.read(in_len - in_tlen)
-
-            if not in_tmp:
-                break
-
-            in_tlen += len(in_tmp)
-            in_arr.append(in_tmp)
-
-        in_data = b"".join(in_arr)
+        in_data = await self._read(in_len)
 
         if len(in_data) != in_len or not in_data.endswith(b"\x00\x00"):
             raise ValueError("Invalid data received from server.")
