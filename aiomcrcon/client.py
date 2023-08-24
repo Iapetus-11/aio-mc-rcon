@@ -72,7 +72,6 @@ class Client:
 
         return out
 
-
     async def _send_msg(self, type_: int, msg: str) -> t.Tuple[str, int]:
         """Sends data to the server, and returns the response."""
 
