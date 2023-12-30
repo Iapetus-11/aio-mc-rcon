@@ -114,6 +114,9 @@ class Client:
         if not self._ready:
             raise ClientNotConnectedError
 
+        if len(cmd) > 1446:
+            raise ValueError("Commands must be 1446 characters or less to be sent via RCON")
+
         return await asyncio.wait_for(self._send_msg(MessageType.COMMAND, cmd), timeout)
 
     async def close(self) -> None:
