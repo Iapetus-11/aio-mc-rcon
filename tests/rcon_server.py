@@ -118,7 +118,6 @@ class Server:
 
     async def close(self) -> None:
         self.server.close()
-        await self.server.wait_closed()
 
         for task in self.client_tasks:
             task.cancel()
