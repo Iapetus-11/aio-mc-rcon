@@ -13,7 +13,6 @@ class MessageType(enum.IntEnum):
     LOGIN = 3
     COMMAND = 2
     RESPONSE = 0
-    INVALID_AUTH = -1
 
 
 class Client:
@@ -55,7 +54,7 @@ class Client:
         except Exception as e:
             raise RCONConnectionError("The connection failed for an unknown reason.", e)
 
-        await self._send_msg(MessageType.LOGIN, self.password)
+        await asyncio.wait_for(self._send_msg(MessageType.LOGIN, self.password), timeout)
 
         self._ready = True
 
@@ -72,14 +71,14 @@ class Client:
 
         return out
 
-    async def _send_msg(self, type_: int, msg: str) -> t.Tuple[str, int]:
+    async def _send_msg(self, msg_type: int, msg: str) -> tuple[str, int]:
         """Sends data to the server, and returns the response."""
 
         # randomly generate request id
         req_id = random.randint(0, 2147483647)
 
         # pack request id, packet type, and the actual message
-        packet_data = struct.pack("<ii", req_id, type_) + msg.encode("utf8") + b"\x00\x00"
+        packet_data = struct.pack("<ii", req_id, msg_type) + msg.encode("utf8") + b"\x00\x00"
 
         # pack length of packet + rest of packet data
         packet = struct.pack("<i", len(packet_data)) + packet_data
@@ -98,17 +97,17 @@ class Client:
             raise ValueError("Invalid data received from server.")
 
         # decode the incoming request id and packet type
-        in_type, in_req_id = struct.unpack("<ii", in_data[0:8])
+        in_req_id, in_type = struct.unpack("<ii", in_data[0:8])
 
-        if in_type == MessageType.INVALID_AUTH:
+        if in_req_id == -1:
             raise IncorrectPasswordError
 
         # decode the received message
         in_msg = in_data[8:-2].decode("utf8")
 
-        return in_msg, in_type
+        return in_msg, in_req_id
 
-    async def send_cmd(self, cmd: str, timeout: float = 2.0) -> t.Tuple[str, int]:
+    async def send_cmd(self, cmd: str, timeout: float = 2.0) -> tuple[str, int]:
         """Sends a command to the server."""
 
         if not self._ready:
