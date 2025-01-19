@@ -6,6 +6,7 @@ want to put forth the effort of writing quality code.
 
 import asyncio
 import struct
+import typing as t
 
 from aiomcrcon.client import MessageType
 
@@ -37,7 +38,7 @@ class Server:
         return out
 
     @classmethod
-    async def read_packet(cls, reader: asyncio.StreamReader) -> tuple[int, int, bytes] | None:
+    async def read_packet(cls, reader: asyncio.StreamReader) -> t.Tuple[int, int, bytes] | None:
         header_data = await cls.read_bytes(reader, cls.packet_HEADER_SIZE)
 
         if not header_data:
