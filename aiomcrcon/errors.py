@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 class RCONConnectionError(Exception):
     """Raised when the Client.connect() method fails."""
 
