@@ -71,7 +71,7 @@ class Client:
 
         return out
 
-    async def _send_msg(self, msg_type: int, msg: str) -> t.Tuple[str, int]:
+    async def _send_msg(self, msg_type: int, msg: str) -> tuple[str, int]:
         """Sends data to the server, and returns the response."""
 
         # randomly generate request id
@@ -107,7 +107,7 @@ class Client:
 
         return in_msg, in_req_id
 
-    async def send_cmd(self, cmd: str, timeout: float = 2.0) -> t.Tuple[str, int]:
+    async def send_cmd(self, cmd: str, timeout: float = 2.0) -> tuple[str, int]:
         """Sends a command to the server."""
 
         if not self._ready:
