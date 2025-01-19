@@ -1,10 +1,7 @@
-import typing as t
-
-
 class RCONConnectionError(Exception):
     """Raised when the Client.connect() method fails."""
 
-    def __init__(self, msg: t.Optional[str] = None, error: t.Optional[Exception] = None) -> None:
+    def __init__(self, msg: str | None = None, error: Exception | None = None) -> None:
         super().__init__(msg)
 
         self.message = msg
