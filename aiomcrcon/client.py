@@ -54,7 +54,11 @@ class Client:
         except Exception as e:
             raise RCONConnectionError("The connection failed for an unknown reason.", e)
 
-        await asyncio.wait_for(self._send_msg(MessageType.LOGIN, self.password), timeout)
+        try:
+            await asyncio.wait_for(self._send_msg(MessageType.LOGIN, self.password), timeout)
+        except (Exception, asyncio.CancelledError):
+            await self.close()
+            raise
 
         self._ready = True
 
@@ -113,19 +117,20 @@ class Client:
         if not self._ready:
             raise ClientNotConnectedError
 
-        if len(cmd) > 1446:
-            raise ValueError("Commands must be 1446 characters or less to be sent via RCON")
+        if len(cmd.encode("utf8")) > 1446:
+            raise ValueError("Commands must be 1446 bytes or less to be sent via RCON")
 
         return await asyncio.wait_for(self._send_msg(MessageType.COMMAND, cmd), timeout)
 
     async def close(self) -> None:
         """Closes the connection between the client and the server."""
 
-        if self._ready:
-            self._writer.close()
-            await self._writer.wait_closed()
+        writer = self._writer
 
-            self._reader = None
-            self._writer = None
+        self._reader = None
+        self._writer = None
+        self._ready = False
 
-            self._ready = False
+        if writer is not None:
+            writer.close()
+            await writer.wait_closed()

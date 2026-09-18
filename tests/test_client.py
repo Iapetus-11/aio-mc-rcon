@@ -43,6 +43,15 @@ async def test_incorrect_password(client: Client):
     with pytest.raises(IncorrectPasswordError):
         await client.connect()
 
+    assert client._reader is None
+    assert client._writer is None
+
+
+async def test_command_length_uses_encoded_bytes(client: Client):
+    async with client:
+        with pytest.raises(ValueError, match="1446 bytes or less"):
+            await client.send_cmd("é" * 1446)
+
 
 async def test_client_not_connected(client: Client):
     with pytest.raises(ClientNotConnectedError):
